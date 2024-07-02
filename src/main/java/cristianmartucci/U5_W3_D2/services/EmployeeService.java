@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,10 +25,12 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private PasswordEncoder bcrypt;
 
     public Employee saveEmployee(EmployeeDTO employeeDTO){
         if(employeeRepository.findByEmail(employeeDTO.email()).isEmpty()){
-            Employee employee = new Employee(employeeDTO.username(), employeeDTO.name(), employeeDTO.surname(), employeeDTO.email(), employeeDTO.password());
+            Employee employee = new Employee(employeeDTO.username(), employeeDTO.name(), employeeDTO.surname(), employeeDTO.email(), bcrypt.encode(employeeDTO.password()));
             employee.setAvatar("https://ui-avatars.com/api/?name=" + employee.getName() + "+" +employee.getSurname());
             return this.employeeRepository.save(employee);
         }else {

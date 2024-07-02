@@ -3,6 +3,7 @@ package cristianmartucci.U5_W3_D2.exceptions;
 import cristianmartucci.U5_W3_D2.payloads.ErrorsDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,6 +32,13 @@ public class ExceptionsHandler {
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public ErrorsDTO handleUnauthorized(NotFoundException error){
 		return new ErrorsDTO(error.getMessage(), LocalDateTime.now());
+	}
+
+	@ExceptionHandler(AuthorizationDeniedException.class)
+	// Questo metodo dovrà rispondere con 403
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public ErrorsDTO handleForbidden(AuthorizationDeniedException ex) {
+		return new ErrorsDTO("Non hai accesso a questa funzionalità", LocalDateTime.now());
 	}
 
 	@ExceptionHandler(NotFoundException.class)
